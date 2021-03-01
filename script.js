@@ -1,11 +1,4 @@
 
-const URL = 'https://www.omdbapi.com/';
-
-export default async function getImdbFilm(name) {
-  const url = `${URL}?t=${name}&apikey=719dd825`;
-  return fetch(url).then(response => response.json());
-}
-
 const url = "https://ghibliapi.herokuapp.com/films"
 function displayLoading() {
     $("#loading-message").modal("show");
