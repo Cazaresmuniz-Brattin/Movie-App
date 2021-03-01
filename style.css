@@ -50,3 +50,7 @@ header form{
     transform: rotate(360deg);
   }
 }
+.jumbotron{
+  background-image: url('https://images.fandango.com/cms/assets/4ca035c0-204d-11ea-a1d8-836502298ce7--studioghibli-banner-desktop.jpg');
+  background-size: cover;
+  height: 100%;}
