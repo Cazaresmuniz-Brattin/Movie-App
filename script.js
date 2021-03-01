@@ -1,3 +1,4 @@
+
 const url = "https://ghibliapi.herokuapp.com/films"
 function displayLoading() {
     $("#loading-message").modal("show");
