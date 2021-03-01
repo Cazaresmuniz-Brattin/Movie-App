@@ -52,3 +52,160 @@ function appendModalHTML(modalHTML){
     $("#edit-modal-container").empty();
     $("#edit-modal-container").append(modalHTML);
 }
+
+function appendMovieHTML(movieHTML){
+    $("#movies-cards-container").append(movieHTML);
+}
+
+function setupListeners(){
+    $(".close").click(function() {
+        let userDelete = confirm("Are you sure you want to delete this message?");
+        if (userDelete === true){
+            deleteMovies($(this).attr("data-id"));
+            console.log("Movie Deleted");
+        }
+    })
+    $(".edit-btn").click(function(){
+        let modalObject = {
+            id: $(this).attr("data-id"),
+            title: $(this).parent().children("h5").attr("data-title"),
+            rating: $(this).parent().children("p").first().attr("data-rating")
+        }
+        console.log("Modal Object: ", modalObject)
+        appendModalHTML(buildModalHTML(modalObject));
+        $("#edit-modal-container").modal("show")
+        $("#save-edits-button").click(function(){
+            console.log($(this));
+            let updatedMovieID = $(this).attr("data-id")
+            console.log(updatedMovieID);
+            let updatedMovieObject = {
+                title: $("#editModalMovieTitle").val(),
+                rating: $("input[name='inlineRadioEditOptions']:checked").val()
+            }
+            console.log(updatedMovieObject);
+            updateMovie(updatedMovieObject, updatedMovieID);
+        })
+    })
+}
+
+function createMovies() {
+    let movieObject = {
+        title: $("#modalMovieTitle").val(),
+        rating: $("input[name='inlineRadioOptions']:checked").val()
+    }
+    pushToMovies(movieObject);
+}
+
+function deleteMovies(movieId) {
+    const deleteOptions ={
+        method: "DELETE",
+    }
+    fetch(`${url}/${movieId}`, deleteOptions)
+        .then(response => console.log(response))
+        .then( moviesRerender =>{ fetch(url)
+            .then(response => response.json())
+            .then(listOfMovies => {
+                $("#movies-cards-container").empty();
+                listOfMovies.forEach(function (element) {
+                    appendMovieHTML(buildMovieCard(element));
+                })
+                setupListeners();
+            })
+        });
+// .catch(error => console.error(error))
+}
+
+function updateMovie(movieObject, movieID){
+    const options = {
+        "method": "PUT",
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "body": JSON.stringify(movieObject)
+    };
+    fetch(`${url}/${movieID}`,options)
+        .then(response => console.log(response))
+        .then(() => {
+            $("#edit-modal-container").modal("hide")
+            displayLoading();
+            fetch(url)
+                .then(response => response.json())
+                .then(listOfMovies => {
+                    $("#movies-cards-container").empty();
+                    listOfMovies.forEach(function (element) {
+                        appendMovieHTML(buildMovieCard(element));
+                    })
+                    // todo We needed this event listener to be after the cards are populated, otherwise there were issues with the scope
+                    setupListeners();
+                    setTimeout(function(){
+                        $("#loading-message").modal("hide");
+                    }, 3000);
+                })
+                .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error))
+}
+
+function pushToMovies(movieObject) {
+    const options = {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "body": JSON.stringify(movieObject)
+    };
+    // Movie added
+    fetch(url,options)
+        .then(response => console.log(response))
+        .catch(error => console.error(error))
+        .then( movieLoad => {
+            fetch(url)
+                .then(response => response.json())
+                .then(listOfMovies => {
+                    let newestMovie = listOfMovies[listOfMovies.length - 1]
+                    console.log(newestMovie);
+                    appendMovieHTML(buildMovieCard(newestMovie));
+                    toggleMovieHTML();
+                    setupListeners();
+                    // todo get the HTML appended properly, not currently appending for some reason
+                })
+        })
+
+    // Modal closes
+    $("#add-modal").modal("hide");
+
+    // HTML disappears, Loading appears
+    toggleMovieHTML();
+    // toggleLoading();
+
+}
+
+$(document).ready(function () {
+    displayLoading();
+    setTimeout(function () {
+        $("#loading-message").modal("hide");
+    },3000)
+    fetch(url)
+        .then(response => response.json())
+        .then(listOfMovies => {
+            listOfMovies.forEach(function (element) {
+                appendMovieHTML(buildMovieCard(element));
+            })
+            // todo We needed this event listener to be after the cards are populated, otherwise there were issues with the scope
+            setupListeners();
+        })
+        .catch(error => console.error(error));
+
+
+    $("#add-btn").click((e) => {
+        e.preventDefault();
+        $("#add-modal").modal("show")
+    })
+
+
+});
+
+$("#save-changes-button").click(function () {
+    createMovies();
+
+})
