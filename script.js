@@ -46,3 +46,9 @@ function buildModalHTML(modalObject){
     modalHTML += `</div></div>`
     return modalHTML;
 }
+
+// Edit Movie Button
+function appendModalHTML(modalHTML){
+    $("#edit-modal-container").empty();
+    $("#edit-modal-container").append(modalHTML);
+}
