@@ -1,5 +1,5 @@
+const url = "https://legendary-strong-cesium.glitch.me/movies"
 
-const url = "https://ghibliapi.herokuapp.com/films"
 function displayLoading() {
     $("#loading-message").modal("show");
 }
@@ -12,8 +12,7 @@ function buildMovieCard(movieObject) {
     movieHTML += `<div class="card my-3 border border-primary rounded"><div class="card-body">`
     movieHTML += `<button type="button" data-id="${movieObject.id}" id="${movieObject.id}-button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i id="delete-button" class="fas fa-trash text-primary"></i></span></button>`
     movieHTML += `<h5 class="card-title" data-title="${movieObject.title}"><span class="heading-font-cards">Title:</span> ${movieObject.title}</h5>`
-    movieHTML += `<p class="card-text" data-rating="${movieObject.description}"><span class="heading-font-cards">Description:</span> ${movieObject.description}</p>`
-    movieHTML += `<p class="card-text" data-rating="${movieObject.rt_score}"><span class="heading-font-cards">Rating:</span> ${movieObject.rt_score}</p>`
+    movieHTML += `<p class="card-text" data-rating="${movieObject.rating}"><span class="heading-font-cards">Rating:</span> ${movieObject.rating}</p>`
     movieHTML += `<button type="button" data-id="${movieObject.id}" id="${movieObject.id}-edit-button" class="edit-btn btn btn-primary" data-dismiss="modal" aria-label="Edit"><span class="heading-font-cards" aria-hidden="true">Edit Movie</span></button>`
     movieHTML += `</div></div>`
     return movieHTML;
